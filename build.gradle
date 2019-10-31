@@ -1,0 +1,40 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+
+group 'org.frcteam2910'
+version '1.0'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+application {
+    mainClassName = "org.frcteam2910.pathviewer.Main"
+}
+
+javafx {
+    version = "11.0.2"
+    modules = [
+            "javafx.controls",
+            "javafx.fxml"
+    ]
+}
+
+repositories {
+    mavenCentral()
+
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    // Currently we are not depending on master because we are relying on a rewrite of the trajectory code.
+    compile "com.github.Kaboomboom3.Common:common:trajectory-rewrite-SNAPSHOT"
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+wrapper {
+    gradleVersion = "5.6.3"
+    distributionType = Wrapper.DistributionType.ALL
+}
