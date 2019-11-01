@@ -5,5 +5,5 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.frcteam2910.pathviewer.Application"
             prefHeight="400.0" prefWidth="600.0">
-
+    <fx:include source="FieldDisplay.fxml"/>
 </AnchorPane>
