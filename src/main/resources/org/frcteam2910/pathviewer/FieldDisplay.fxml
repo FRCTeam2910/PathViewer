@@ -9,7 +9,7 @@
       fx:id="root">
     <Group fx:id="group">
         <ImageView fx:id="backgroundImage" preserveRatio="true"/>
-        <Pane>
+        <Pane fx:id="drawPane">
             <Group fx:id="splineGroup"/>
             <Group fx:id="controlLineGroup"/>
             <Group fx:id="anchorGroup"/>
