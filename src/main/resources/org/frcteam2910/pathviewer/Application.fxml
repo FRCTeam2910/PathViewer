@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns="http://javafx.com/javafx"
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.frcteam2910.pathviewer.Application"
             prefHeight="400.0" prefWidth="600.0">
-    <fx:include source="FieldDisplay.fxml"/>
-</AnchorPane>
+    <center>
+        <fx:include source="FieldDisplay.fxml"/>
+    </center>
+</BorderPane>

@@ -40,7 +40,7 @@ public class FieldDisplay {
 
     @FXML
     private void initialize() {
-        field = new Field(new Image("org/frcteam2910/pathviewer/2019-field.jpg"), 54.0, 27.0, new Vector2(217, 40), 615 - 40, 1372 - 217);
+        field = new Field(new Image("org/frcteam2910/pathviewer/2019-field.jpg"), 54.0, 27.0, new Vector2(217, 40),  1372 - 217, 615 - 40);
         Image image = field.getImage();
         backgroundImage.setImage(image);
         Scale scale = new Scale();
