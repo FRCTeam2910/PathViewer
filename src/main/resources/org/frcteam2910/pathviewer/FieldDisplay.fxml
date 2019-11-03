@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.Group?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
-<Pane xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.frcteam2910.pathviewer.FieldDisplay"
-      fx:id="root">
+<fx:root type="javafx.scene.layout.Pane"
+         xmlns=" http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml">
     <Group fx:id="group">
-        <ImageView fx:id="backgroundImage" preserveRatio="true"/>
+        <ImageView fx:id="backgroundImage" preserveRatio="true">
+            <Image url="@2019-field.jpg"/>
+        </ImageView>
         <Pane fx:id="drawPane">
             <Group fx:id="splineGroup"/>
             <Group fx:id="controlLineGroup"/>
             <Group fx:id="anchorGroup"/>
         </Pane>
     </Group>
-</Pane>
+</fx:root>

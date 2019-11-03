@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -18,7 +19,9 @@ import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.math.spline.BezierSpline;
 import org.frcteam2910.common.math.spline.Spline;
 
-public class FieldDisplay {
+import java.io.IOException;
+
+public class FieldDisplay extends Pane {
     private static final double ANCHOR_OUTLINE_WIDTH = 0.1;
     private static final Color PRIMARY_ANCHOR_COLOR = Color.YELLOW;
     private static final double PRIMARY_ANCHOR_RADIUS = 0.25;
@@ -30,8 +33,6 @@ public class FieldDisplay {
     private static final double PATH_WIDTH = 0.2;
     private static final double PATH_INITIAL_CONTROL_DISTANCE = 1.0;
 
-    @FXML
-    private Pane root;
     @FXML
     private Group group;
     @FXML
@@ -49,6 +50,18 @@ public class FieldDisplay {
 
     private ObservableList<PathSection> sections = FXCollections.observableArrayList();
 
+    public FieldDisplay() {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FieldDisplay.fxml"));
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+
+        try {
+            fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @FXML
     private void initialize() {
         field = new Field(new Image("org/frcteam2910/pathviewer/2019-field.jpg"), new Vector2(54.0, 27.0), new Vector2(217, 40), new Vector2(1372 - 217, 615 - 40));
@@ -56,11 +69,11 @@ public class FieldDisplay {
         backgroundImage.setImage(image);
         Scale scale = new Scale();
         scale.xProperty().bind(Bindings.createDoubleBinding(() ->
-                        Math.min(root.getWidth() / image.getWidth(), root.getHeight() / image.getHeight()),
-                root.widthProperty(), root.heightProperty()));
+                        Math.min(getWidth() / image.getWidth(), getHeight() / image.getHeight()),
+                widthProperty(), heightProperty()));
         scale.yProperty().bind(Bindings.createDoubleBinding(() ->
-                        Math.min(root.getWidth() / image.getWidth(), root.getHeight() / image.getHeight()),
-                root.widthProperty(), root.heightProperty()));
+                        Math.min(getWidth() / image.getWidth(), getHeight() / image.getHeight()),
+                widthProperty(), heightProperty()));
 
         group.getTransforms().add(scale);
 
@@ -138,16 +151,10 @@ public class FieldDisplay {
                     new Anchor(CONTROL_ANCHOR_COLOR, controlX2Property(), controlY2Property(), CONTROL_ANCHOR_RADIUS)
             };
 
-            controlLines = new ControlLine[controlAnchors.length + 1];
-            for (int i = 0; i < controlLines.length; i++) {
-                if (i == 0) {
-                    controlLines[i] = new ControlLine(startAnchor, controlAnchors[0]);
-                } else if (i == controlLines.length - 1) {
-                    controlLines[i] = new ControlLine(endAnchor, controlAnchors[controlAnchors.length - 1]);
-                } else {
-                    controlLines[i] = new ControlLine(controlAnchors[i - 1], controlAnchors[i]);
-                }
-            }
+            controlLines = new ControlLine[]{
+                    new ControlLine(startAnchor, controlAnchors[0]),
+                    new ControlLine(controlAnchors[1], endAnchor)
+            };
         }
 
         public void onAdded(Group anchorGroup, Group controlLineGroup, Group splineGroup) {
