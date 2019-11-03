@@ -19,6 +19,17 @@ import org.frcteam2910.common.math.spline.BezierSpline;
 import org.frcteam2910.common.math.spline.Spline;
 
 public class FieldDisplay {
+    private static final double ANCHOR_OUTLINE_WIDTH = 0.1;
+    private static final Color PRIMARY_ANCHOR_COLOR = Color.YELLOW;
+    private static final double PRIMARY_ANCHOR_RADIUS = 0.25;
+    private static final Color CONTROL_ANCHOR_COLOR = Color.FORESTGREEN;
+    private static final double CONTROL_ANCHOR_RADIUS = 0.15;
+    private static final Color CONTROL_LINE_COLOR = Color.FORESTGREEN;
+    private static final double CONTROL_LINE_WIDTH = 0.1;
+    private static final Color PATH_COLOR = Color.BLUEVIOLET;
+    private static final double PATH_WIDTH = 0.2;
+    private static final double PATH_INITIAL_CONTROL_DISTANCE = 1.0;
+
     @FXML
     private Pane root;
     @FXML
@@ -40,7 +51,7 @@ public class FieldDisplay {
 
     @FXML
     private void initialize() {
-        field = new Field(new Image("org/frcteam2910/pathviewer/2019-field.jpg"), 54.0, 27.0, new Vector2(217, 40),  1372 - 217, 615 - 40);
+        field = new Field(new Image("org/frcteam2910/pathviewer/2019-field.jpg"), new Vector2(54.0, 27.0), new Vector2(217, 40), new Vector2(1372 - 217, 615 - 40));
         Image image = field.getImage();
         backgroundImage.setImage(image);
         Scale scale = new Scale();
@@ -53,8 +64,8 @@ public class FieldDisplay {
 
         group.getTransforms().add(scale);
 
-        drawPane.setPrefHeight(field.getLength());
-        drawPane.setPrefWidth(field.getWidth());
+        drawPane.setPrefWidth(field.getSize().x);
+        drawPane.setPrefHeight(field.getSize().y);
         drawPane.setLayoutX(field.getCoord().x);
         drawPane.setLayoutY(field.getCoord().y);
         drawPane.setScaleX(field.getScale());
@@ -75,11 +86,11 @@ public class FieldDisplay {
         drawPane.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 if (anchorGroup.getChildren().isEmpty()) {
-                    Anchor anchor = new Anchor(Color.TOMATO, mouseEvent.getX(), mouseEvent.getY(), 0.25);
+                    Anchor anchor = new Anchor(PRIMARY_ANCHOR_COLOR, mouseEvent.getX(), mouseEvent.getY(), PRIMARY_ANCHOR_RADIUS);
                     anchorGroup.getChildren().add(anchor);
                 } else {
                     Anchor start = (Anchor) anchorGroup.getChildren().get(anchorGroup.getChildren().size() - 1);
-                    Anchor end = new Anchor(Color.TOMATO, mouseEvent.getX(), mouseEvent.getY(), 0.25);
+                    Anchor end = new Anchor(PRIMARY_ANCHOR_COLOR, mouseEvent.getX(), mouseEvent.getY(), PRIMARY_ANCHOR_RADIUS);
 
                     sections.add(new PathSection(start, end));
                 }
@@ -101,16 +112,16 @@ public class FieldDisplay {
 
             setStartX(start.x);
             setStartY(start.y);
-            setControlX1(start.x + 1 * delta.normal().x);
-            setControlY1(start.y + 1 * delta.normal().y);
-            setControlX2(end.x - 1 * delta.normal().x);
-            setControlY2(end.y - 1 * delta.normal().y);
+            setControlX1(start.x + PATH_INITIAL_CONTROL_DISTANCE * delta.normal().x);
+            setControlY1(start.y + PATH_INITIAL_CONTROL_DISTANCE * delta.normal().y);
+            setControlX2(end.x - PATH_INITIAL_CONTROL_DISTANCE * delta.normal().x);
+            setControlY2(end.y - PATH_INITIAL_CONTROL_DISTANCE * delta.normal().y);
             setEndX(end.x);
             setEndY(end.y);
 
             // Setup curve colors
-            setStroke(Color.BLUEVIOLET);
-            setStrokeWidth(0.1);
+            setStroke(PATH_COLOR);
+            setStrokeWidth(PATH_WIDTH);
             setStrokeLineCap(StrokeLineCap.ROUND);
             setFill(Color.TRANSPARENT);
 
@@ -123,8 +134,8 @@ public class FieldDisplay {
             this.startAnchor = startAnchor;
             this.endAnchor = endAnchor;
             controlAnchors = new Anchor[]{
-                    new Anchor(Color.FORESTGREEN, controlX1Property(), controlY1Property(), 0.15),
-                    new Anchor(Color.FORESTGREEN, controlX2Property(), controlY2Property(), 0.15)
+                    new Anchor(CONTROL_ANCHOR_COLOR, controlX1Property(), controlY1Property(), CONTROL_ANCHOR_RADIUS),
+                    new Anchor(CONTROL_ANCHOR_COLOR, controlX2Property(), controlY2Property(), CONTROL_ANCHOR_RADIUS)
             };
 
             controlLines = new ControlLine[controlAnchors.length + 1];
@@ -194,8 +205,8 @@ public class FieldDisplay {
             endXProperty().bind(end.centerXProperty());
             endYProperty().bind(end.centerYProperty());
 
-            setStrokeWidth(0.1);
-            setStroke(Color.FORESTGREEN.deriveColor(0, 1, 1, 0.5));
+            setStrokeWidth(CONTROL_LINE_WIDTH);
+            setStroke(CONTROL_LINE_COLOR.deriveColor(0, 1, 1, 0.5));
         }
     }
 
@@ -210,11 +221,10 @@ public class FieldDisplay {
             super(x, y, radius);
             setFill(color.deriveColor(1, 1, 1, 0.5));
             setStroke(color);
-            setStrokeWidth(0.1);
+            setStrokeWidth(ANCHOR_OUTLINE_WIDTH);
             setStrokeType(StrokeType.OUTSIDE);
 
             setOnMouseDragged(mouseEvent -> {
-                System.out.printf("(%.3f, %.3f)%n", mouseEvent.getX(), mouseEvent.getY());
                 setCenterX(mouseEvent.getX());
                 setCenterY(mouseEvent.getY());
             });

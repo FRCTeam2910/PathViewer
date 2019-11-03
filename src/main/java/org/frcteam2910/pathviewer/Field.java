@@ -8,21 +8,19 @@ import java.util.function.Supplier;
 public class Field {
     private final Supplier<Image> imageSupplier;
     private Image image;
-    private final double width;
-    private final double length;
+    private final Vector2 size;
     private final double scale;
     private final Vector2 coord;
 
-    public Field(Supplier<Image> imageSupplier, double width, double length, Vector2 pixelOffset, double pixelWidth, double pixelLength) {
+    public Field(Supplier<Image> imageSupplier, Vector2 size, Vector2 pixelOffset, Vector2 pixelSize) {
         this.imageSupplier = imageSupplier;
-        this.width = width;
-        this.length = length;
-        this.coord = pixelOffset.add(pixelWidth / 2 - width / 2, pixelLength / 2 - length / 2);
-        this.scale = ((pixelWidth / width) + (pixelLength / length)) / 2;
+        this.size = size;
+        this.coord = pixelOffset.add(pixelSize.subtract(size).scale(0.5));
+        this.scale = ((pixelSize.x / size.x) + (pixelSize.y / size.y)) / 2;
     }
 
-    public Field(Image image, double width, double length, Vector2 pixelOffset, double pixelWidth, double pixelLength) {
-        this(() -> image, width, length, pixelOffset, pixelWidth, pixelLength);
+    public Field(Image image, Vector2 size, Vector2 pixelOffset, Vector2 pixelSize) {
+        this(() -> image, size, pixelOffset, pixelSize);
     }
 
     public Image getImage() {
@@ -32,12 +30,8 @@ public class Field {
         return image;
     }
 
-    public double getWidth() {
-        return width;
-    }
-
-    public double getLength() {
-        return length;
+    public Vector2 getSize() {
+        return size;
     }
 
     public Vector2 getCoord() {
