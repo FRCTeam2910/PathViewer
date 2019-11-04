@@ -15,21 +15,22 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Scale;
+import org.frcteam2910.common.control.Path;
+import org.frcteam2910.common.control.SplinePathBuilder;
+import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.math.Vector2;
-import org.frcteam2910.common.math.spline.BezierSpline;
-import org.frcteam2910.common.math.spline.Spline;
 
 import java.io.IOException;
 
 public class FieldDisplay extends Pane {
     private static final double ANCHOR_OUTLINE_WIDTH = 0.1;
-    private static final Color PRIMARY_ANCHOR_COLOR = Color.YELLOW;
+    private static final Color PRIMARY_ANCHOR_COLOR = Color.rgb(255, 255, 0);
     private static final double PRIMARY_ANCHOR_RADIUS = 0.25;
-    private static final Color CONTROL_ANCHOR_COLOR = Color.FORESTGREEN;
+    private static final Color CONTROL_ANCHOR_COLOR = Color.rgb(13, 163, 73);
     private static final double CONTROL_ANCHOR_RADIUS = 0.15;
-    private static final Color CONTROL_LINE_COLOR = Color.FORESTGREEN;
+    private static final Color CONTROL_LINE_COLOR = Color.rgb(13, 163, 73);
     private static final double CONTROL_LINE_WIDTH = 0.1;
-    private static final Color PATH_COLOR = Color.BLUEVIOLET;
+    private static final Color PATH_COLOR = Color.rgb(107, 82, 148);
     private static final double PATH_WIDTH = 0.2;
     private static final double PATH_INITIAL_CONTROL_DISTANCE = 1.0;
 
@@ -109,6 +110,21 @@ public class FieldDisplay extends Pane {
                 }
             }
         });
+    }
+
+    public Path getPath() {
+        SplinePathBuilder builder = new SplinePathBuilder(
+                sections.get(0).startAnchor.getCenter(),
+                Rotation2.ZERO,
+                Rotation2.ZERO
+        );
+        sections.forEach(section -> builder.bezier(
+                section.controlAnchors[0].getCenter(),
+                section.controlAnchors[1].getCenter(),
+                section.endAnchor.getCenter()
+        ));
+
+        return builder.build();
     }
 
     private static class PathSection extends CubicCurve {
@@ -191,17 +207,6 @@ public class FieldDisplay extends Pane {
             controlLineGroup.getChildren().removeAll(controlLines);
 
             splineGroup.getChildren().remove(this);
-        }
-
-        public Spline toSpline() {
-            Vector2[] controlPoints = new Vector2[controlAnchors.length + 2];
-            controlPoints[0] = startAnchor.getCenter();
-            for (int i = 0; i < controlAnchors.length; i++) {
-                controlPoints[i + 1] = controlAnchors[i].getCenter();
-            }
-            controlPoints[controlPoints.length - 1] = endAnchor.getCenter();
-
-            return new BezierSpline(controlPoints);
         }
     }
 
