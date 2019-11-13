@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import org.frcteam2910.pathviewer.FieldDisplay?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.frcteam2910.pathviewer.Application"
+            fx:id="root"
             prefHeight="720.0" prefWidth="1280.0">
+    <top>
+        <MenuBar>
+            <Menu text="File">
+                <MenuItem text="Open" onAction="#onOpen" accelerator="Ctrl+O"/>
+                <MenuItem text="Save" onAction="#onSave" accelerator="Ctrl+S"/>
+                <MenuItem text="Save As" onAction="#onSaveAs" accelerator="Ctrl+Shift+S"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="Exit" onAction="#onExit" accelerator="Alt+F4"/>
+            </Menu>
+        </MenuBar>
+    </top>
     <center>
         <FieldDisplay fx:id="fieldDisplay"/>
     </center>

@@ -29,7 +29,7 @@ repositories {
 
 dependencies {
     // Currently we are not depending on master because we are relying on a rewrite of the trajectory code.
-    compile "com.github.Kaboomboom3.Common:common:trajectory-rewrite-SNAPSHOT"
+    compile "com.github.Kaboomboom3.Common:common:5ce773f"
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

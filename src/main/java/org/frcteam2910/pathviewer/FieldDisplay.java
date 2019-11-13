@@ -17,10 +17,15 @@ import javafx.scene.shape.*;
 import javafx.scene.transform.Scale;
 import org.frcteam2910.common.control.Path;
 import org.frcteam2910.common.control.SplinePathBuilder;
+import org.frcteam2910.common.control.SplinePathSegment;
 import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.math.Vector2;
+import org.frcteam2910.common.math.spline.CubicBezierSpline;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class FieldDisplay extends Pane {
     private static final double ANCHOR_OUTLINE_WIDTH = 0.1;
@@ -112,7 +117,24 @@ public class FieldDisplay extends Pane {
         });
     }
 
+    /**
+     * Clears the current path from the display.
+     */
+    public void clearPath() {
+        sections.clear();
+    }
+
+    /**
+     * Gets the path that is currently on the display.
+     *
+     * @return The path or null if no path is on the display.
+     */
+    @CheckForNull
     public Path getPath() {
+        if (sections.isEmpty()) {
+            return null;
+        }
+
         SplinePathBuilder builder = new SplinePathBuilder(
                 sections.get(0).startAnchor.getCenter(),
                 Rotation2.ZERO,
@@ -125,6 +147,47 @@ public class FieldDisplay extends Pane {
         ));
 
         return builder.build();
+    }
+
+    /**
+     * Sets the path that is currently on the display.
+     *
+     * @param path The path to display.
+     */
+    public void setPath(@Nonnull Path path) {
+        clearPath();
+
+        Arrays.stream(path.getSegments())
+                .map(s -> (SplinePathSegment) s)
+                .forEachOrdered(s -> {
+                    CubicBezierSpline spline = CubicBezierSpline.convert(s.getSpline());
+                    Vector2[] controlPoints = spline.getControlPoints();
+
+                    Anchor startAnchor;
+                    if (sections.isEmpty()) {
+                        startAnchor = new Anchor(
+                                PRIMARY_ANCHOR_COLOR,
+                                controlPoints[0].x,
+                                controlPoints[0].y,
+                                PRIMARY_ANCHOR_RADIUS
+                        );
+                    } else {
+                        startAnchor = sections.get(sections.size() - 1).endAnchor;
+                    }
+
+                    Anchor endAnchor = new Anchor(
+                            PRIMARY_ANCHOR_COLOR,
+                            controlPoints[3].x,
+                            controlPoints[3].y,
+                            PRIMARY_ANCHOR_RADIUS
+                    );
+
+                    PathSection section = new PathSection(startAnchor, endAnchor);
+                    section.controlAnchors[0].setCenter(controlPoints[1]);
+                    section.controlAnchors[1].setCenter(controlPoints[2]);
+
+                    sections.add(section);
+                });
     }
 
     private static class PathSection extends CubicCurve {
@@ -244,6 +307,11 @@ public class FieldDisplay extends Pane {
 
         public Vector2 getCenter() {
             return new Vector2(getCenterX(), getCenterY());
+        }
+
+        public void setCenter(Vector2 center) {
+            setCenterX(center.x);
+            setCenterY(center.y);
         }
     }
 }
