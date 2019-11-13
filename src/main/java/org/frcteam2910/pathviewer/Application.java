@@ -71,7 +71,8 @@ public class Application {
             fieldDisplay.setPath(path);
         } catch (IOException e) {
             // If we were unable to read the path file, let the user know and log to console.
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Unable to read contents of path.\n" + e.getLocalizedMessage(), ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage());
+            alert.setHeaderText("Unable to open path");
             alert.show();
 
             LOGGER.error(e);
@@ -100,11 +101,8 @@ public class Application {
         try (PathWriter writer = new PathWriter(new FileWriter(currentFile, StandardCharsets.UTF_8))) {
             writer.write(path);
         } catch (IOException e) {
-            Alert alert = new Alert(
-                    Alert.AlertType.ERROR,
-                    "Unable to save path.\n" + e.getLocalizedMessage(),
-                    ButtonType.OK
-            );
+            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage());
+            alert.setHeaderText("Unable to save path");
             alert.show();
 
             LOGGER.error(e);
