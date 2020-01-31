@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -70,7 +71,7 @@ public class FieldDisplay extends Pane {
 
     @FXML
     private void initialize() {
-        field = new Field(new Image("org/frcteam2910/pathviewer/2019-field.jpg"), new Vector2(54.0, 27.0), new Vector2(217, 40), new Vector2(1372 - 217, 615 - 40));
+        field = new Field(new Image("org/frcteam2910/pathviewer/2020-field.png"), new Vector2(54.0, 27.0), new Vector2(564, 436), new Vector2(3179 - 217, 1756 - 40));
         Image image = field.getImage();
         backgroundImage.setImage(image);
         Scale scale = new Scale();
@@ -113,6 +114,8 @@ public class FieldDisplay extends Pane {
 
                     sections.add(new PathSection(start, end));
                 }
+            } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
+                removeLastPoint();
             }
         });
     }
@@ -122,6 +125,14 @@ public class FieldDisplay extends Pane {
      */
     public void clearPath() {
         sections.clear();
+    }
+
+    public void removeLastPoint() {
+        int groupLength = anchorGroup.getChildren().size();
+
+        int sectionLength = sections.size();
+        anchorGroup.getChildren().remove(groupLength - 1, groupLength);
+        sections.remove(sectionLength - 1, sectionLength);
     }
 
     /**

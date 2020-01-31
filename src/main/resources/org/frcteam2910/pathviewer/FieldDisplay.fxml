@@ -9,7 +9,7 @@
          xmlns:fx="http://javafx.com/fxml">
     <Group fx:id="group">
         <ImageView fx:id="backgroundImage" preserveRatio="true">
-            <Image url="@2019-field.jpg"/>
+            <Image url="@2020-field.png"/>
         </ImageView>
         <Pane fx:id="drawPane">
             <Group fx:id="splineGroup"/>
