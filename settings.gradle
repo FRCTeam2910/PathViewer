@@ -1,1 +1,10 @@
-rootProject.name = 'pathviewer'
+pluginManagement {
+    plugins {
+        id "net.ltgt.errorprone" version "1.1.1"
+        id "org.openjfx.javafxplugin" version "0.0.8"
+    }
+}
+
+rootProject.name = "pathviewer"
+
+include ":common"
