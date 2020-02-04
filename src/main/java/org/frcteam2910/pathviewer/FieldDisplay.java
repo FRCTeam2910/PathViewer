@@ -29,16 +29,16 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class FieldDisplay extends Pane {
-    private static final double ANCHOR_OUTLINE_WIDTH = 0.1;
+    private static final double ANCHOR_OUTLINE_WIDTH = 6;
     private static final Color PRIMARY_ANCHOR_COLOR = Color.rgb(255, 255, 0);
-    private static final double PRIMARY_ANCHOR_RADIUS = 0.25;
+    private static final double PRIMARY_ANCHOR_RADIUS = 3;
     private static final Color CONTROL_ANCHOR_COLOR = Color.rgb(13, 163, 73);
-    private static final double CONTROL_ANCHOR_RADIUS = 0.15;
+    private static final double CONTROL_ANCHOR_RADIUS = 4;
     private static final Color CONTROL_LINE_COLOR = Color.rgb(13, 163, 73);
-    private static final double CONTROL_LINE_WIDTH = 0.1;
+    private static final double CONTROL_LINE_WIDTH = 2;
     private static final Color PATH_COLOR = Color.rgb(107, 82, 148);
-    private static final double PATH_WIDTH = 0.2;
-    private static final double PATH_INITIAL_CONTROL_DISTANCE = 1.0;
+    private static final double PATH_WIDTH = 3;
+    private static final double PATH_INITIAL_CONTROL_DISTANCE = 12;
 
     @FXML
     private Group group;
@@ -71,7 +71,7 @@ public class FieldDisplay extends Pane {
 
     @FXML
     private void initialize() {
-        field = new Field(new Image("org/frcteam2910/pathviewer/2020-field.png"), new Vector2(54.0, 27.0), new Vector2(564, 436), new Vector2(3179 - 217, 1756 - 40));
+        field = new Field(new Image("org/frcteam2910/pathviewer/2020-field.png"), new Vector2(54.0 * 12.0, 27.0 * 12.0), new Vector2(76, 64), new Vector2(2696 - 76, 1688 - 64));
         Image image = field.getImage();
         backgroundImage.setImage(image);
         Scale scale = new Scale();
