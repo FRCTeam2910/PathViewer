@@ -6,7 +6,8 @@
 <?import javafx.scene.layout.Pane?>
 <fx:root type="javafx.scene.layout.Pane"
          xmlns=" http://javafx.com/javafx"
-         xmlns:fx="http://javafx.com/fxml">
+         xmlns:fx="http://javafx.com/fxml"
+         stylesheets="@FieldDisplay.css">
     <Group fx:id="group">
         <ImageView fx:id="backgroundImage" preserveRatio="true">
             <Image url="@2020-field.png"/>

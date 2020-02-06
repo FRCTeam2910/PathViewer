@@ -1,0 +1,30 @@
+.field-point {
+    -fx-fill: rgba(255, 255, 255, 0.5);
+    -fx-stroke: rgb(255, 255, 255);
+    -fx-stroke-width: 1;
+    -fx-stroke-type: outside;
+}
+
+.field-primary-control-point {
+    -fx-fill: rgba(255, 255, 0, 0.5);
+    -fx-stroke: rgb(255, 255, 0);
+}
+
+.field-secondary-control-point {
+    -fx-fill: rgba(13, 163, 73, 0.5);
+    -fx-stroke: rgb(13, 163, 73);
+}
+
+.field-control-line {
+    -fx-fill: transparent;
+    -fx-stroke: rgb(13, 163, 73);
+    -fx-stroke-line-cap: round;
+    -fx-stroke-width: 2;
+}
+
+.field-path-section {
+    -fx-fill: transparent;
+    -fx-stroke: rgb(107, 82, 148);
+    -fx-stroke-line-cap: round;
+    -fx-stroke-width: 3;
+}
