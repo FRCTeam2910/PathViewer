@@ -1,9 +1,12 @@
 package org.frcteam2910.pathviewer;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -21,10 +24,13 @@ import org.frcteam2910.common.math.spline.CubicBezierSpline;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 
 public class FieldDisplay extends Pane {
+    private static final PseudoClass SELECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("selected");
+
     @FXML
     private Group group;
     @FXML
@@ -41,6 +47,8 @@ public class FieldDisplay extends Pane {
     private Field field;
 
     private ObservableList<FieldPathSection> sections = FXCollections.observableArrayList();
+
+    private SimpleObjectProperty<FieldPoint> selectedPoint = new SimpleObjectProperty<>(null);
 
     public FieldDisplay() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FieldDisplay.fxml"));
@@ -107,6 +115,25 @@ public class FieldDisplay extends Pane {
                 }
             } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
                 removeLastPoint();
+            }
+        });
+        drawPane.setOnMousePressed(mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                if (mouseEvent.getTarget() instanceof FieldPoint) {
+                    // Select point
+                    setSelectedPoint((FieldPoint) mouseEvent.getTarget());
+                } else {
+                    // Deselect point
+                    setSelectedPoint(null);
+                }
+            }
+        });
+        selectedPointProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                oldValue.pseudoClassStateChanged(SELECTED_PSEUDO_CLASS, false);
+            }
+            if (newValue != null) {
+                newValue.pseudoClassStateChanged(SELECTED_PSEUDO_CLASS, true);
             }
         });
     }
@@ -186,5 +213,18 @@ public class FieldDisplay extends Pane {
 
                     sections.add(section);
                 });
+    }
+
+    public ObjectProperty<FieldPoint> selectedPointProperty() {
+        return selectedPoint;
+    }
+
+    @CheckForNull
+    public FieldPoint getSelectedPoint() {
+        return selectedPointProperty().get();
+    }
+
+    public void setSelectedPoint(@Nullable FieldPoint point) {
+        selectedPointProperty().set(point);
     }
 }
