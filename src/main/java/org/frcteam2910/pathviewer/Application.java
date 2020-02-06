@@ -24,6 +24,8 @@ public class Application {
     private BorderPane root;
     @FXML
     private FieldDisplay fieldDisplay;
+    @FXML
+    private PointEditorController pointEditorController;
 
     /**
      * The path file that is currently being edited.
@@ -33,6 +35,7 @@ public class Application {
 
     @FXML
     private void initialize() {
+        pointEditorController.fieldPointProperty().bind(fieldDisplay.selectedPointProperty());
     }
 
     @CheckForNull

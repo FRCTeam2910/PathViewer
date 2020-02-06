@@ -22,4 +22,7 @@
     <center>
         <FieldDisplay fx:id="fieldDisplay"/>
     </center>
+    <bottom>
+        <fx:include source="PointEditor.fxml" fx:id="pointEditor"/>
+    </bottom>
 </BorderPane>

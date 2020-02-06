@@ -64,7 +64,7 @@ public class FieldDisplay extends Pane {
 
     @FXML
     private void initialize() {
-        field = new Field(new Image("org/frcteam2910/pathviewer/2020-field.png"), new Vector2(54.0 * 12.0, 27.0 * 12.0), new Vector2(76, 64), new Vector2(2696 - 76, 1688 - 64));
+        field = new Field(new Image("org/frcteam2910/pathviewer/2020-field.png"), new Vector2(54.0 * 12.0, 27.0 * 12.0), new Vector2(76, 64), new Vector2(2696 - 76, 1386 - 64));
         Image image = field.getImage();
         backgroundImage.setImage(image);
         Scale scale = new Scale();
