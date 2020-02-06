@@ -1,7 +1,6 @@
 package org.frcteam2910.pathviewer;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -10,11 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
 import javafx.scene.transform.Scale;
 import org.frcteam2910.common.control.Path;
 import org.frcteam2910.common.control.SplinePathBuilder;
@@ -29,17 +25,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class FieldDisplay extends Pane {
-    private static final double ANCHOR_OUTLINE_WIDTH = 6;
-    private static final Color PRIMARY_ANCHOR_COLOR = Color.rgb(255, 255, 0);
-    private static final double PRIMARY_ANCHOR_RADIUS = 3;
-    private static final Color CONTROL_ANCHOR_COLOR = Color.rgb(13, 163, 73);
-    private static final double CONTROL_ANCHOR_RADIUS = 4;
-    private static final Color CONTROL_LINE_COLOR = Color.rgb(13, 163, 73);
-    private static final double CONTROL_LINE_WIDTH = 2;
-    private static final Color PATH_COLOR = Color.rgb(107, 82, 148);
-    private static final double PATH_WIDTH = 3;
-    private static final double PATH_INITIAL_CONTROL_DISTANCE = 12;
-
     @FXML
     private Group group;
     @FXML
@@ -55,7 +40,7 @@ public class FieldDisplay extends Pane {
 
     private Field field;
 
-    private ObservableList<PathSection> sections = FXCollections.observableArrayList();
+    private ObservableList<FieldPathSection> sections = FXCollections.observableArrayList();
 
     public FieldDisplay() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FieldDisplay.fxml"));
@@ -91,13 +76,13 @@ public class FieldDisplay extends Pane {
         drawPane.setScaleX(field.getScale());
         drawPane.setScaleY(field.getScale());
 
-        sections.addListener((ListChangeListener<PathSection>) c -> {
+        sections.addListener((ListChangeListener<FieldPathSection>) c -> {
             while (c.next()) {
-                for (PathSection section : c.getAddedSubList()) {
+                for (FieldPathSection section : c.getAddedSubList()) {
                     section.onAdded(anchorGroup, controlLineGroup, splineGroup);
                 }
 
-                for (PathSection section : c.getRemoved()) {
+                for (FieldPathSection section : c.getRemoved()) {
                     section.onRemove(anchorGroup, controlLineGroup, splineGroup, c.getList());
                 }
             }
@@ -106,13 +91,19 @@ public class FieldDisplay extends Pane {
         drawPane.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 if (anchorGroup.getChildren().isEmpty()) {
-                    Anchor anchor = new Anchor(PRIMARY_ANCHOR_COLOR, mouseEvent.getX(), mouseEvent.getY(), PRIMARY_ANCHOR_RADIUS);
+                    FieldPrimaryControlPoint anchor = new FieldPrimaryControlPoint(
+                            mouseEvent.getX(),
+                            mouseEvent.getY()
+                    );
                     anchorGroup.getChildren().add(anchor);
                 } else {
-                    Anchor start = (Anchor) anchorGroup.getChildren().get(anchorGroup.getChildren().size() - 1);
-                    Anchor end = new Anchor(PRIMARY_ANCHOR_COLOR, mouseEvent.getX(), mouseEvent.getY(), PRIMARY_ANCHOR_RADIUS);
+                    FieldPrimaryControlPoint start = (FieldPrimaryControlPoint) anchorGroup.getChildren().get(anchorGroup.getChildren().size() - 1);
+                    FieldPrimaryControlPoint end = new FieldPrimaryControlPoint(
+                            mouseEvent.getX(),
+                            mouseEvent.getY()
+                    );
 
-                    sections.add(new PathSection(start, end));
+                    sections.add(new FieldPathSection(start, end));
                 }
             } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
                 removeLastPoint();
@@ -174,155 +165,26 @@ public class FieldDisplay extends Pane {
                     CubicBezierSpline spline = CubicBezierSpline.convert(s.getSpline());
                     Vector2[] controlPoints = spline.getControlPoints();
 
-                    Anchor startAnchor;
+                    FieldPrimaryControlPoint startAnchor;
                     if (sections.isEmpty()) {
-                        startAnchor = new Anchor(
-                                PRIMARY_ANCHOR_COLOR,
+                        startAnchor = new FieldPrimaryControlPoint(
                                 controlPoints[0].x,
-                                controlPoints[0].y,
-                                PRIMARY_ANCHOR_RADIUS
+                                controlPoints[0].y
                         );
                     } else {
                         startAnchor = sections.get(sections.size() - 1).endAnchor;
                     }
 
-                    Anchor endAnchor = new Anchor(
-                            PRIMARY_ANCHOR_COLOR,
+                    FieldPrimaryControlPoint endAnchor = new FieldPrimaryControlPoint(
                             controlPoints[3].x,
-                            controlPoints[3].y,
-                            PRIMARY_ANCHOR_RADIUS
+                            controlPoints[3].y
                     );
 
-                    PathSection section = new PathSection(startAnchor, endAnchor);
+                    FieldPathSection section = new FieldPathSection(startAnchor, endAnchor);
                     section.controlAnchors[0].setCenter(controlPoints[1]);
                     section.controlAnchors[1].setCenter(controlPoints[2]);
 
                     sections.add(section);
                 });
-    }
-
-    private static class PathSection extends CubicCurve {
-        public final Anchor startAnchor;
-        public final Anchor endAnchor;
-
-        public final Anchor[] controlAnchors;
-        public final ControlLine[] controlLines;
-
-        public PathSection(Anchor startAnchor, Anchor endAnchor) {
-            Vector2 start = startAnchor.getCenter();
-            Vector2 end = endAnchor.getCenter();
-            Vector2 delta = end.subtract(start);
-
-            setStartX(start.x);
-            setStartY(start.y);
-            setControlX1(start.x + PATH_INITIAL_CONTROL_DISTANCE * delta.normal().x);
-            setControlY1(start.y + PATH_INITIAL_CONTROL_DISTANCE * delta.normal().y);
-            setControlX2(end.x - PATH_INITIAL_CONTROL_DISTANCE * delta.normal().x);
-            setControlY2(end.y - PATH_INITIAL_CONTROL_DISTANCE * delta.normal().y);
-            setEndX(end.x);
-            setEndY(end.y);
-
-            // Setup curve colors
-            setStroke(PATH_COLOR);
-            setStrokeWidth(PATH_WIDTH);
-            setStrokeLineCap(StrokeLineCap.ROUND);
-            setFill(Color.TRANSPARENT);
-
-            // Bind end points to anchor positions
-            startXProperty().bind(startAnchor.centerXProperty());
-            startYProperty().bind(startAnchor.centerYProperty());
-            endXProperty().bind(endAnchor.centerXProperty());
-            endYProperty().bind(endAnchor.centerYProperty());
-
-            this.startAnchor = startAnchor;
-            this.endAnchor = endAnchor;
-            controlAnchors = new Anchor[]{
-                    new Anchor(CONTROL_ANCHOR_COLOR, controlX1Property(), controlY1Property(), CONTROL_ANCHOR_RADIUS),
-                    new Anchor(CONTROL_ANCHOR_COLOR, controlX2Property(), controlY2Property(), CONTROL_ANCHOR_RADIUS)
-            };
-
-            controlLines = new ControlLine[]{
-                    new ControlLine(startAnchor, controlAnchors[0]),
-                    new ControlLine(controlAnchors[1], endAnchor)
-            };
-        }
-
-        public void onAdded(Group anchorGroup, Group controlLineGroup, Group splineGroup) {
-            if (!anchorGroup.getChildren().contains(startAnchor)) {
-                anchorGroup.getChildren().add(startAnchor);
-            }
-            anchorGroup.getChildren().addAll(controlAnchors);
-            if (!anchorGroup.getChildren().contains(endAnchor)) {
-                anchorGroup.getChildren().add(endAnchor);
-            }
-            controlLineGroup.getChildren().addAll(controlLines);
-
-            splineGroup.getChildren().add(this);
-        }
-
-        public void onRemove(Group anchorGroup, Group controlLineGroup, Group splineGroup, ObservableList<? extends PathSection> otherSections) {
-            boolean canRemoveStart = true;
-            boolean canRemoveEnd = true;
-            for (PathSection s : otherSections) {
-                if (s.endAnchor == startAnchor) {
-                    canRemoveStart = false;
-                }
-                if (s.startAnchor == endAnchor) {
-                    canRemoveEnd = false;
-                }
-            }
-            if (canRemoveStart) {
-                anchorGroup.getChildren().remove(startAnchor);
-            }
-            anchorGroup.getChildren().removeAll(controlAnchors);
-            if (canRemoveEnd) {
-                anchorGroup.getChildren().remove(endAnchor);
-            }
-            controlLineGroup.getChildren().removeAll(controlLines);
-
-            splineGroup.getChildren().remove(this);
-        }
-    }
-
-    private static class ControlLine extends Line {
-        public ControlLine(Anchor start, Anchor end) {
-            startXProperty().bind(start.centerXProperty());
-            startYProperty().bind(start.centerYProperty());
-            endXProperty().bind(end.centerXProperty());
-            endYProperty().bind(end.centerYProperty());
-
-            setStrokeWidth(CONTROL_LINE_WIDTH);
-            setStroke(CONTROL_LINE_COLOR.deriveColor(0, 1, 1, 0.5));
-        }
-    }
-
-    private static class Anchor extends Circle {
-        public Anchor(Color color, DoubleProperty x, DoubleProperty y, double radius) {
-            this(color, x.get(), y.get(), radius);
-            x.bind(centerXProperty());
-            y.bind(centerYProperty());
-        }
-
-        public Anchor(Color color, double x, double y, double radius) {
-            super(x, y, radius);
-            setFill(color.deriveColor(1, 1, 1, 0.5));
-            setStroke(color);
-            setStrokeWidth(ANCHOR_OUTLINE_WIDTH);
-            setStrokeType(StrokeType.OUTSIDE);
-
-            setOnMouseDragged(mouseEvent -> {
-                setCenterX(mouseEvent.getX());
-                setCenterY(mouseEvent.getY());
-            });
-        }
-
-        public Vector2 getCenter() {
-            return new Vector2(getCenterX(), getCenterY());
-        }
-
-        public void setCenter(Vector2 center) {
-            setCenterX(center.x);
-            setCenterY(center.y);
-        }
     }
 }
