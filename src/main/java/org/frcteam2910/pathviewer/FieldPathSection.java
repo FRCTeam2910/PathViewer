@@ -43,9 +43,12 @@ class FieldPathSection extends CubicCurve {
         this.startAnchor = startAnchor;
         this.endAnchor = endAnchor;
         controlAnchors = new FieldSecondaryControlPoint[]{
-                new FieldSecondaryControlPoint(controlX1Property(), controlY1Property()),
-                new FieldSecondaryControlPoint(controlX2Property(), controlY2Property())
+                new FieldSecondaryControlPoint(controlX1Property(), controlY1Property(), startAnchor),
+                new FieldSecondaryControlPoint(controlX2Property(), controlY2Property(), endAnchor)
         };
+
+        startAnchor.setConnectedSecondaryControlPoint(controlAnchors[0]);
+        endAnchor.setConnectedSecondaryControlPoint(controlAnchors[1]);
 
         controlLines = new FieldControlLine[]{
                 new FieldControlLine(startAnchor, controlAnchors[0]),
@@ -87,5 +90,9 @@ class FieldPathSection extends CubicCurve {
         controlLineGroup.getChildren().removeAll(controlLines);
 
         splineGroup.getChildren().remove(this);
+    }
+
+    public FieldSecondaryControlPoint getFirstSecondaryControlPoint(){
+        return controlAnchors[0];
     }
 }

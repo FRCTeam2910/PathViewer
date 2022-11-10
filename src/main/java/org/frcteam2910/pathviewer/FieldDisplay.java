@@ -111,7 +111,15 @@ public class FieldDisplay extends Pane {
                             mouseEvent.getY()
                     );
 
-                    sections.add(new FieldPathSection(start, end));
+                    FieldPathSection path = new FieldPathSection(start, end);
+
+                    if (anchorGroup.getChildren().size() > 1) {
+                        FieldSecondaryControlPoint secondaryConnectedPoint = (FieldSecondaryControlPoint)anchorGroup.getChildren().get(anchorGroup.getChildren().size() - 2);
+                        path.getFirstSecondaryControlPoint().setConnectedSecondaryControlPoint(secondaryConnectedPoint);
+                        secondaryConnectedPoint.setConnectedSecondaryControlPoint(path.getFirstSecondaryControlPoint());
+                    }
+
+                    sections.add(path);
                 }
             } else if (mouseEvent.getButton() == MouseButton.MIDDLE) {
                 removeLastPoint();
