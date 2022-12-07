@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.frcteam2910.pathviewer.PointEditorController">
+   <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+   </rowConstraints>
+   <columnConstraints>
+      <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints minWidth="10.0" />
+   </columnConstraints>
+   <children>
+      <Label text="Point X:">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin></Label>
+      <Label text="Point Y:" GridPane.rowIndex="1" />
+      <Label text="Point Rotation:" GridPane.rowIndex="2" />
+      <TextField fx:id="txtX" GridPane.columnIndex="1" />
+      <TextField fx:id="txtY" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TextField fx:id="txtRotationField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Button fx:id="btnUpdate" mnemonicParsing="false" text="Update" GridPane.rowIndex="3" onAction="#updateValues"/>
+   </children>
+   <padding>
+      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+   </padding>
+</GridPane>
