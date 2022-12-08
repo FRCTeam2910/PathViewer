@@ -13,9 +13,11 @@
             <Image url="@2020-field.png"/>
         </ImageView>
         <Pane fx:id="drawPane">
+            <Group fx:id="outlineGroup"/>
             <Group fx:id="splineGroup"/>
             <Group fx:id="controlLineGroup"/>
             <Group fx:id="anchorGroup"/>
+            <Group fx:id="rotationGroup"/>
         </Pane>
     </Group>
 </fx:root>

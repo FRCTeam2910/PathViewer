@@ -10,6 +10,11 @@
     -fx-stroke: rgb(255, 255, 0);
 }
 
+.field-rotation-control-point {
+    -fx-fill: rgba(255, 0, 0, 0.5);
+    -fx-stroke: rgb(255, 0, 0);
+}
+
 .field-point:selected {
     -fx-fill: rgba(0, 0, 255, 0.5);
     -fx-stroke: rgb(0, 0, 255);
@@ -23,6 +28,13 @@
 .field-control-line {
     -fx-fill: transparent;
     -fx-stroke: rgb(13, 163, 73);
+    -fx-stroke-line-cap: round;
+    -fx-stroke-width: 2;
+}
+
+.field-rotation-line {
+    -fx-fill: transparent;
+    -fx-stroke: rgb(255, 0, 0);
     -fx-stroke-line-cap: round;
     -fx-stroke-width: 2;
 }

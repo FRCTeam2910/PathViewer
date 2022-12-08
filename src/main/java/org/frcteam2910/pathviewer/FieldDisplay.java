@@ -26,6 +26,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FieldDisplay extends Pane {
@@ -43,12 +44,18 @@ public class FieldDisplay extends Pane {
     private Group anchorGroup;
     @FXML
     private Group controlLineGroup;
+    @FXML
+    private Group rotationGroup;
+    @FXML
+    private Group outlineGroup;
 
     private Field field;
 
     private ObservableList<FieldPathSection> sections = FXCollections.observableArrayList();
 
     private SimpleObjectProperty<FieldPoint> selectedPoint = new SimpleObjectProperty<>(null);
+
+    private ArrayList<FieldPrimaryControlPoint> lastPoint = new ArrayList<>();
 
     public FieldDisplay() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FieldDisplay.fxml"));
@@ -101,16 +108,23 @@ public class FieldDisplay extends Pane {
                 if (anchorGroup.getChildren().isEmpty()) {
                     FieldPrimaryControlPoint anchor = new FieldPrimaryControlPoint(
                             mouseEvent.getX(),
-                            mouseEvent.getY()
+                            mouseEvent.getY(),
+                            outlineGroup,
+                            rotationGroup,
+                            controlLineGroup
                     );
+                    lastPoint.add(anchor);
                     anchorGroup.getChildren().add(anchor);
                 } else {
                     FieldPrimaryControlPoint start = (FieldPrimaryControlPoint) anchorGroup.getChildren().get(anchorGroup.getChildren().size() - 1);
                     FieldPrimaryControlPoint end = new FieldPrimaryControlPoint(
                             mouseEvent.getX(),
-                            mouseEvent.getY()
+                            mouseEvent.getY(),
+                            outlineGroup,
+                            rotationGroup,
+                            controlLineGroup
                     );
-
+                    lastPoint.add(end);
                     FieldPathSection path = new FieldPathSection(start, end);
 
                     if (anchorGroup.getChildren().size() > 1) {
@@ -129,7 +143,15 @@ public class FieldDisplay extends Pane {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 if (mouseEvent.getTarget() instanceof FieldPoint) {
                     // Select point
-                    setSelectedPoint((FieldPoint) mouseEvent.getTarget());
+                    if (mouseEvent.getClickCount() == 2 && anchorGroup.getChildren().contains(mouseEvent.getTarget()) && mouseEvent.getTarget() != anchorGroup.getChildren().get(0)) {
+                        try {
+                            FieldPrimaryControlPoint point = (FieldPrimaryControlPoint) getSelectedPoint();
+                            assert point != null;
+                            point.toggleRotatable();
+                        } catch (Exception ignore) {}
+                    } else {
+                        setSelectedPoint((FieldPoint) mouseEvent.getTarget());
+                    }
                 } else {
                     // Deselect point
                     setSelectedPoint(null);
@@ -155,8 +177,12 @@ public class FieldDisplay extends Pane {
 
     public void removeLastPoint() {
         int groupLength = anchorGroup.getChildren().size();
-
+        int rotationLength = rotationGroup.getChildren().size();
         int sectionLength = sections.size();
+        int outlineLength = outlineGroup.getChildren().size();
+
+        outlineGroup.getChildren().remove(outlineLength - 1, outlineLength);
+        rotationGroup.getChildren().remove(rotationLength - 1, rotationLength);
         anchorGroup.getChildren().remove(groupLength - 1, groupLength);
         sections.remove(sectionLength - 1, sectionLength);
     }
@@ -204,7 +230,10 @@ public class FieldDisplay extends Pane {
                     if (sections.isEmpty()) {
                         startAnchor = new FieldPrimaryControlPoint(
                                 controlPoints[0].x,
-                                controlPoints[0].y
+                                controlPoints[0].y,
+                                outlineGroup,
+                                rotationGroup,
+                                controlLineGroup
                         );
                     } else {
                         startAnchor = sections.get(sections.size() - 1).endAnchor;
@@ -212,7 +241,10 @@ public class FieldDisplay extends Pane {
 
                     FieldPrimaryControlPoint endAnchor = new FieldPrimaryControlPoint(
                             controlPoints[3].x,
-                            controlPoints[3].y
+                            controlPoints[3].y,
+                            outlineGroup,
+                            rotationGroup,
+                            controlLineGroup
                     );
 
                     FieldPathSection section = new FieldPathSection(startAnchor, endAnchor);

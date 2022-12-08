@@ -2,9 +2,7 @@ package org.frcteam2910.pathviewer;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
-import javafx.scene.shape.StrokeLineCap;
 import org.frcteam2910.common.math.Vector2;
 
 class FieldPathSection extends CubicCurve {

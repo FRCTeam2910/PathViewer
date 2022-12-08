@@ -3,6 +3,7 @@ package org.frcteam2910.pathviewer;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.input.MouseEvent;
 import org.frcteam2910.common.math.Vector2;
+import javafx.scene.shape.Rectangle;
 
 public class FieldSecondaryControlPoint extends FieldPoint {
     public static final int RADIUS = 3;
@@ -10,8 +11,21 @@ public class FieldSecondaryControlPoint extends FieldPoint {
     public final FieldPrimaryControlPoint connectedPrimaryControlPoint;
     public FieldSecondaryControlPoint connectedSecondaryControlPoint = null;
 
+    Rectangle rectangle;
+
     public FieldSecondaryControlPoint(DoubleProperty x, DoubleProperty y, FieldPrimaryControlPoint connectedPrimaryControlPoint) {
         super(x, y, RADIUS);
+
+        this.connectedPrimaryControlPoint = connectedPrimaryControlPoint;
+
+        getStyleClass().add(STYLE_CLASS_NAME);
+        setOnMouseDragged(this::dragHandler);
+    }
+
+    public FieldSecondaryControlPoint(DoubleProperty x, DoubleProperty y, FieldPrimaryControlPoint connectedPrimaryControlPoint, Rectangle rectangle) {
+        super(x, y, RADIUS);
+
+        this.rectangle = rectangle;
 
         this.connectedPrimaryControlPoint = connectedPrimaryControlPoint;
 
@@ -43,5 +57,9 @@ public class FieldSecondaryControlPoint extends FieldPoint {
 
     public void setConnectedSecondaryControlPoint(FieldSecondaryControlPoint connectedSecondaryControlPoint){
         this.connectedSecondaryControlPoint = connectedSecondaryControlPoint;
+    }
+
+    private double getAngle(Vector2 primaryCoord, Vector2 secondaryCoord) {
+        return Math.toDegrees(Math.atan2(primaryCoord.y - secondaryCoord.y, primaryCoord.x - secondaryCoord.x));
     }
 }
