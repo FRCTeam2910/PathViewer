@@ -13,7 +13,8 @@ import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 import org.frcteam2910.common.control.Path;
 import org.frcteam2910.common.control.SplinePathBuilder;
@@ -71,7 +72,10 @@ public class FieldDisplay extends Pane {
 
     @FXML
     private void initialize() {
-        field = new Field(new Image("org/frcteam2910/pathviewer/2020-field.png"), new Vector2(54.0 * 12.0, 27.0 * 12.0), new Vector2(76, 64), new Vector2(2696 - 76, 1688 - 64));
+        final int xOffset = 312;
+        final int yOffset = 160;
+        //TODO: move origin from top left without moving pane
+        field = new Field(new Image("org/frcteam2910/pathviewer/2020-field.png"), new Vector2(629.25, 323.25), new Vector2(2784 / 629.25 * 0 * (5 + xOffset), 1452 / 323.25 * 0 * (42 + yOffset)), new Vector2(2784, 1452));
         Image image = field.getImage();
         backgroundImage.setImage(image);
         Scale scale = new Scale();
@@ -85,11 +89,12 @@ public class FieldDisplay extends Pane {
         group.getTransforms().add(scale);
 
         drawPane.setPrefWidth(field.getSize().x);
-        drawPane.setPrefHeight(field.getSize().y);
+        drawPane.setPrefHeight(field.getSize().y/* + 108*/);
         drawPane.setLayoutX(field.getCoord().x);
         drawPane.setLayoutY(field.getCoord().y);
         drawPane.setScaleX(field.getScale());
         drawPane.setScaleY(field.getScale());
+        drawPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderStroke.MEDIUM)));
 
         sections.addListener((ListChangeListener<FieldPathSection>) c -> {
             while (c.next()) {
@@ -98,7 +103,7 @@ public class FieldDisplay extends Pane {
                 }
 
                 for (FieldPathSection section : c.getRemoved()) {
-                    section.onRemove(anchorGroup, controlLineGroup, splineGroup, c.getList());
+                    section.onRemove(anchorGroup, controlLineGroup, splineGroup, outlineGroup, rotationGroup, c.getList());
                 }
             }
         });
@@ -176,14 +181,8 @@ public class FieldDisplay extends Pane {
     }
 
     public void removeLastPoint() {
-        int groupLength = anchorGroup.getChildren().size();
-        int rotationLength = rotationGroup.getChildren().size();
         int sectionLength = sections.size();
-        int outlineLength = outlineGroup.getChildren().size();
 
-        outlineGroup.getChildren().remove(outlineLength - 1, outlineLength);
-        rotationGroup.getChildren().remove(rotationLength - 1, rotationLength);
-        anchorGroup.getChildren().remove(groupLength - 1, groupLength);
         sections.remove(sectionLength - 1, sectionLength);
     }
 

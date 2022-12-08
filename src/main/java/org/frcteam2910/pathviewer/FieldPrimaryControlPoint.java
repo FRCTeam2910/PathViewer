@@ -15,7 +15,7 @@ public class FieldPrimaryControlPoint extends FieldPoint {
     public final ArrayList<FieldSecondaryControlPoint> connectedSecondaryControlPoints = new ArrayList<>();
 
     public FieldRotationControlPoint connectedRotationControlPoint;
-    private FieldControlLine rotationLine;
+    public FieldControlLine rotationLine;
 
     private boolean rotate = true;
 
@@ -30,6 +30,9 @@ public class FieldPrimaryControlPoint extends FieldPoint {
 
     public FieldPrimaryControlPoint(double x, double y, Group outlineGroup, Group rotationGroup, Group controlLinesGroup) {
         super(x, y, RADIUS);
+
+        System.out.println("X: " + x);
+        System.out.println("Y: " + y);
 
         this.rectangle = addRectangle(x, y);
         outlineGroup.getChildren().add(rectangle);
@@ -62,6 +65,9 @@ public class FieldPrimaryControlPoint extends FieldPoint {
         setCenterX(mouseEvent.getX());
         setCenterY(mouseEvent.getY());
 
+        System.out.println("X: " + mouseEvent.getX());
+        System.out.println("Y: " + mouseEvent.getY());
+
         rectangle.relocate(mouseEvent.getX() - rectangle.getWidth() / 2, mouseEvent.getY() - rectangle.getWidth() / 2);
 
         if (connectedRotationControlPoint != null)
@@ -78,15 +84,6 @@ public class FieldPrimaryControlPoint extends FieldPoint {
     public void setConnectedSecondaryControlPoint(FieldSecondaryControlPoint connectedSecondaryPoint) {
         connectedSecondaryControlPoints.add(connectedSecondaryPoint);
     }
-
-    public void setConnectedRotationControlPoint(FieldRotationControlPoint connectedRotationControlPoint) {
-        this.connectedRotationControlPoint = connectedRotationControlPoint;
-    }
-
-    public void setRotationLine(FieldControlLine rotationLine) {
-        this.rotationLine = rotationLine;
-    }
-
 
     private Rectangle addRectangle(double x, double y) {
         double size = 50;

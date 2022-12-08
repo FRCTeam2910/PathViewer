@@ -67,7 +67,7 @@ class FieldPathSection extends CubicCurve {
         splineGroup.getChildren().add(this);
     }
 
-    public void onRemove(Group anchorGroup, Group controlLineGroup, Group splineGroup, ObservableList<? extends FieldPathSection> otherSections) {
+    public void onRemove(Group anchorGroup, Group controlLineGroup, Group splineGroup, Group outlineGroup, Group rotationGroup, ObservableList<? extends FieldPathSection> otherSections) {
         boolean canRemoveStart = true;
         boolean canRemoveEnd = true;
         for (FieldPathSection s : otherSections) {
@@ -79,10 +79,16 @@ class FieldPathSection extends CubicCurve {
             }
         }
         if (canRemoveStart) {
+            controlLineGroup.getChildren().remove(startAnchor.rotationLine);
+            outlineGroup.getChildren().remove(startAnchor.rectangle);
+            rotationGroup.getChildren().remove(startAnchor.connectedRotationControlPoint);
             anchorGroup.getChildren().remove(startAnchor);
         }
         anchorGroup.getChildren().removeAll(controlAnchors);
         if (canRemoveEnd) {
+            controlLineGroup.getChildren().remove(endAnchor.rotationLine);
+            outlineGroup.getChildren().remove(endAnchor.rectangle);
+            rotationGroup.getChildren().remove(endAnchor.connectedRotationControlPoint);
             anchorGroup.getChildren().remove(endAnchor);
         }
         controlLineGroup.getChildren().removeAll(controlLines);
