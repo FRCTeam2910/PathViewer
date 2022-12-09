@@ -5,6 +5,7 @@ import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.math.Vector2;
 
 import java.util.ArrayList;
@@ -96,6 +97,16 @@ public class FieldPrimaryControlPoint extends FieldPoint {
 
     public boolean getRotatable() {
         return rotate;
+    }
+
+    public Rotation2 getRotation() {
+        double angleInDegrees = connectedRotationControlPoint.rectangle.getRotate();
+        double xLength = Math.acos(angleInDegrees);
+        double yLength = Math.asin(angleInDegrees);
+        Rotation2 rotation = new Rotation2(xLength, yLength, false);
+        return rotation;
+
+
     }
 
     public void toggleRotatable() {

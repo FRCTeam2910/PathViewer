@@ -133,7 +133,7 @@ public class FieldDisplay extends Pane {
                     FieldPathSection path = new FieldPathSection(start, end);
 
                     if (anchorGroup.getChildren().size() > 1) {
-                        FieldSecondaryControlPoint secondaryConnectedPoint = (FieldSecondaryControlPoint)anchorGroup.getChildren().get(anchorGroup.getChildren().size() - 2);
+                        FieldSecondaryControlPoint secondaryConnectedPoint = (FieldSecondaryControlPoint) anchorGroup.getChildren().get(anchorGroup.getChildren().size() - 2);
                         path.getFirstSecondaryControlPoint().setConnectedSecondaryControlPoint(secondaryConnectedPoint);
                         secondaryConnectedPoint.setConnectedSecondaryControlPoint(path.getFirstSecondaryControlPoint());
                     }
@@ -153,7 +153,8 @@ public class FieldDisplay extends Pane {
                             FieldPrimaryControlPoint point = (FieldPrimaryControlPoint) getSelectedPoint();
                             assert point != null;
                             point.toggleRotatable();
-                        } catch (Exception ignore) {}
+                        } catch (Exception ignore) {
+                        }
                     } else {
                         setSelectedPoint((FieldPoint) mouseEvent.getTarget());
                     }
@@ -202,11 +203,22 @@ public class FieldDisplay extends Pane {
                 Rotation2.ZERO,
                 Rotation2.ZERO
         );
-        sections.forEach(section -> builder.bezier(
-                section.controlAnchors[0].getCenter(),
-                section.controlAnchors[1].getCenter(),
-                section.endAnchor.getCenter()
-        ));
+
+        sections.forEach(section -> {
+                    if (section.endAnchor.getRotatable()) {
+                        builder.bezier(
+                                section.controlAnchors[0].getCenter(),
+                                section.controlAnchors[1].getCenter(),
+                                section.endAnchor.getCenter(),
+                                section.endAnchor.getRotation());
+                    } else {
+                        builder.bezier(
+                                section.controlAnchors[0].getCenter(),
+                                section.controlAnchors[1].getCenter(),
+                                section.endAnchor.getCenter());
+                    }
+                }
+        );
 
         return builder.build();
     }
