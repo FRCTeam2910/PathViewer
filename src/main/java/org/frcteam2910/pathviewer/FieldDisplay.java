@@ -22,6 +22,7 @@ import org.frcteam2910.common.control.SplinePathSegment;
 import org.frcteam2910.common.math.Rotation2;
 import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.math.spline.CubicBezierSpline;
+import org.frcteam2910.common.util.InterpolatingDouble;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -29,6 +30,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FieldDisplay extends Pane {
     private static final PseudoClass SELECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("selected");
@@ -229,6 +231,8 @@ public class FieldDisplay extends Pane {
      * @param path The path to display.
      */
     public void setPath(@Nonnull Path path) {
+        AtomicReference<Double> length = new AtomicReference<>((double) 0);
+
         clearPath();
 
         Arrays.stream(path.getSegments())
@@ -257,6 +261,15 @@ public class FieldDisplay extends Pane {
                             rotationGroup,
                             controlLineGroup
                     );
+
+                    length.set(length.get() + s.getLength());
+
+                    try {
+                        endAnchor.connectedRotationControlPoint.setRotatePoint(path.getRotationMap().get(new InterpolatingDouble(length.get())).toDegrees());
+                    } catch (Exception e) {
+                        endAnchor.connectedRotationControlPoint.setRotatePoint(0);
+                        endAnchor.toggleRotatable();
+                    }
 
                     FieldPathSection section = new FieldPathSection(startAnchor, endAnchor);
                     section.controlAnchors[0].setCenter(controlPoints[1]);

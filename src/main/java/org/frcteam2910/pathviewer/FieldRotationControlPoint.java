@@ -37,4 +37,17 @@ public class FieldRotationControlPoint extends FieldPoint{
     private double getAngle(Vector2 primaryCoord, Vector2 secondaryCoord) {
         return Math.atan2(primaryCoord.y - secondaryCoord.y, primaryCoord.x - secondaryCoord.x);
     }
+
+    public void setRotatePoint(double angle) {
+        if(angle > 180) {
+            angle = angle - 360;
+        }
+        double y = Math.sin(Math.toRadians(angle)) * DISTANCE;
+        double x = Math.cos(Math.toRadians(angle)) * DISTANCE;
+
+        this.setCenter(primaryControlPoint.getCenterX() + x, primaryControlPoint.getCenterY() + y);
+
+
+        primaryControlPoint.rectangle.setRotate(angle);
+    }
 }
