@@ -59,6 +59,7 @@ public class Application {
 
     @FXML
     private void onOpen() {
+        //TODO: rotation points not being properly set
         currentFile = showOpenPathDialog();
         if (currentFile == null) {
             // No file was selected. Don't do anything

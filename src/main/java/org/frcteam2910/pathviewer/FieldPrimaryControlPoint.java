@@ -101,12 +101,7 @@ public class FieldPrimaryControlPoint extends FieldPoint {
 
     public Rotation2 getRotation() {
         double angleInDegrees = connectedRotationControlPoint.rectangle.getRotate();
-        double xLength = Math.acos(angleInDegrees);
-        double yLength = Math.asin(angleInDegrees);
-        Rotation2 rotation = new Rotation2(xLength, yLength, false);
-        return rotation;
-
-
+        return Rotation2.fromDegrees(angleInDegrees);
     }
 
     public void toggleRotatable() {
